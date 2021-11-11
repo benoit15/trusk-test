@@ -22,13 +22,13 @@ const generateTrucksPrompts = async (nbTrucks) => {
     for(i=0; i < nbTrucks; i++){
         const getTruckVolume = await prompt({
             type: 'number',
-            name: `truck_volume_${i}`,
+            name: `truckVolume_${i}`,
             message: `Volume du camion ${nbTrucks > 1 ? `numéro ${i+1} ` : ''}(en m²) ?`,
         })
 
         const getTruckType = await prompt({
             type: 'input',
-            name: `truck_type_${i}`,
+            name: `truckType_${i}`,
             message: `Type du camion ${nbTrucks > 1 ? `numéro ${i+1} ` : ''}?`,
         })
         trucksForm = { ...trucksForm, ...getTruckVolume, ...getTruckType }
