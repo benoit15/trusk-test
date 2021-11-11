@@ -29,7 +29,7 @@ const prompt = async (value) => {
         name,
     } = value
 
-    // Check if question has been saved in Redis
+    // Check if prompt has been saved in Redis
     const redisValue = await getValue(name)
     if(!redisValue){
         // Run inquirer.prompt

@@ -3,7 +3,7 @@ const { prompt, promptConfirm } = require('./prompt')
 
 console.log('Hello, Welcome to the Trusk ChatBOT')
 
-const generateEmployeesQuestions = async (nbEnmployees) => {
+const generateEmployeesPrompts = async (nbEnmployees) => {
     let employeesForm = {}
     for(i=0; i < nbEnmployees; i++){
         const getEmployeesName = await prompt({
@@ -16,7 +16,7 @@ const generateEmployeesQuestions = async (nbEnmployees) => {
     return employeesForm
 }
 
-const generateTrucksQuestions = async (nbTrucks) => {
+const generateTrucksPrompts = async (nbTrucks) => {
     let trucksForm = {}
 
     for(i=0; i < nbTrucks; i++){
@@ -36,7 +36,7 @@ const generateTrucksQuestions = async (nbTrucks) => {
     return trucksForm
 }
 
-const questionsList = async () => {    
+const promptsList = async () => {    
     const getName = await prompt({
         type: 'input',
         name: 'name',
@@ -55,7 +55,7 @@ const questionsList = async () => {
         message: 'Nombre d\'employés ?'
     })
 
-    const getEmployeesName = await generateEmployeesQuestions(getNbEnmployees.nbEnmployees)
+    const getEmployeesName = await generateEmployeesPrompts(getNbEnmployees.nbEnmployees)
 
     const getNbTrucks = await prompt({
         type: 'number',
@@ -63,7 +63,7 @@ const questionsList = async () => {
         message: 'Nombre de camions ?'
     })
 
-    const getTrucksInfos = await generateTrucksQuestions(getNbTrucks.nbTrucks)
+    const getTrucksInfos = await generateTrucksPrompts(getNbTrucks.nbTrucks)
 
     const response = { 
         ...getName,
@@ -92,7 +92,7 @@ const main = async () => {
         }
     }
     
-    const prompts = await questionsList()
+    const prompts = await promptsList()
 
     console.log(prompts)
     const getValidForm = await promptConfirm('Les informations sont elles valides ?')
