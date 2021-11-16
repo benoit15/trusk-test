@@ -3,23 +3,24 @@ const { prompt, promptConfirm } = require('./prompt')
 
 console.log('Hello, Welcome to the Trusk ChatBOT')
 
-const generateEmployeesPrompts = async (nbEnmployees) => {
-    let employeesForm = {}
-    for(i=0; i < nbEnmployees; i++){
+const generateEmployeesPrompts = async (employees, nbEnmployees, callback) => {
+    const i = Object.keys(employees).length;
+    if(i < nbEnmployees){
         const getEmployeesName = await prompt({
             type: 'input',
             name: `employeesName_${i}`,
             message: `Nom de l'employé ${nbEnmployees > 1 ? `numéro ${i+1} ` : ''}?`,
         })
-        employeesForm = { ...employeesForm, ...getEmployeesName }
+        employees = { ...employees, ...getEmployeesName }
+
+        await generateEmployeesPrompts(employees, nbEnmployees, callback);
+    } else {
+        callback(employees);
     }
-    return employeesForm
 }
 
-const generateTrucksPrompts = async (nbTrucks) => {
-    let trucksForm = {}
-
-    for(i=0; i < nbTrucks; i++){
+const generateTrucksPrompts = async (trucks, i, nbTrucks, callback) => {
+    if(i < nbTrucks){
         const getTruckVolume = await prompt({
             type: 'number',
             name: `truckVolume_${i}`,
@@ -31,9 +32,13 @@ const generateTrucksPrompts = async (nbTrucks) => {
             name: `truckType_${i}`,
             message: `Type du camion ${nbTrucks > 1 ? `numéro ${i+1} ` : ''}?`,
         })
-        trucksForm = { ...trucksForm, ...getTruckVolume, ...getTruckType }
+        
+        trucks = { ...trucks, ...getTruckVolume, ...getTruckType}
+
+        await generateTrucksPrompts(trucks, i+1, nbTrucks, callback);
+    } else {
+        callback(trucks)
     }
-    return trucksForm
 }
 
 const promptsList = async () => {    
@@ -48,22 +53,29 @@ const promptsList = async () => {
         name: 'entityName',
         message: 'Nom de la société ?',
     })
-    
+
+    let getEmployeesName = {}
+
     const getNbEnmployees = await prompt({
         type: 'number',
         name: 'nbEnmployees',
         message: 'Nombre d\'employés ?'
-    })
+    }).then(async (reply) => {
+        await generateEmployeesPrompts({}, reply.nbEnmployees, (employess) => {
+            getEmployeesName = employess
+        })
+    }) 
 
-    const getEmployeesName = await generateEmployeesPrompts(getNbEnmployees.nbEnmployees)
-
+    let getTrucksInfos = {}
     const getNbTrucks = await prompt({
         type: 'number',
         name: 'nbTrucks',
         message: 'Nombre de camions ?'
+    }).then(async (reply) => {
+        await generateTrucksPrompts({}, 0, reply.nbTrucks, (trusks) => {
+            getTrucksInfos = trusks
+        })
     })
-
-    const getTrucksInfos = await generateTrucksPrompts(getNbTrucks.nbTrucks)
 
     const response = { 
         ...getName,
